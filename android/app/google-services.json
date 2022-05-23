@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "667289785663",
+    "project_id": "success-planner-438c1",
+    "storage_bucket": "success-planner-438c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667289785663:android:c384b79dff456f1c0baf8a",
+        "android_client_info": {
+          "package_name": "de.ngproductions.success_planner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667289785663-9n4r89j9f71050e59kvu1mtl1eg0hk6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI1FyvP7YDd2R6UD7jlxhk_8qkkXlsyhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "667289785663-9n4r89j9f71050e59kvu1mtl1eg0hk6u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
