@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:success_planner/constants/routes.dart';
 import 'package:success_planner/views/login_view.dart';
 import 'package:success_planner/views/register_view.dart';
-import 'package:success_planner/views/verify_email.dart';
+import 'package:success_planner/views/verify_email_view.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as devtools;
 
@@ -20,6 +20,7 @@ void main() {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
       },
       home: const HomePage(),
     ),
