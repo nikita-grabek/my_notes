@@ -3,35 +3,54 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
+import 'package:success_planner/extensions/list/filter.dart';
 import 'package:success_planner/services/crud/crud_exceptions.dart';
 
 class NotesService {
   Database? _db;
 
   List<DatabaseNote> _notes = [];
+  DatabaseUser? _user;
 
   // Singleton
   static final NotesService _shared = NotesService._sharedInstance();
   NotesService._sharedInstance() {
-    _notesStramController = StreamController<List<DatabaseNote>>.broadcast(
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
       onListen: () {
-        _notesStramController.sink.add(_notes);
+        _notesStreamController.sink.add(_notes);
       },
     );
   }
   factory NotesService() => _shared;
   //
 
-  late final StreamController<List<DatabaseNote>> _notesStramController;
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
-  Stream<List<DatabaseNote>> get allNotes => _notesStramController.stream;
+  Stream<List<DatabaseNote>> get allNotes =>
+      _notesStreamController.stream.filter((note) {
+        final currentUser = _user;
+        if (currentUser != null) {
+          return note.userId == currentUser.id;
+        } else {
+          throw UserShouldBeSetBeforeReadingAllNotes();
+        }
+      });
 
-  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+  Future<DatabaseUser> getOrCreateUser({
+    required String email,
+    bool setAsCurrentUser = true,
+  }) async {
     try {
       final user = await getUser(email: email);
+      if (setAsCurrentUser) {
+        _user = user;
+      }
       return user;
     } on CouldNotFindUserException {
       final createdUser = await createUser(email: email);
+      if (setAsCurrentUser) {
+        _user = createdUser;
+      }
       return createdUser;
     } catch (e) {
       rethrow;
@@ -41,7 +60,7 @@ class NotesService {
   Future<void> _cacheNotes() async {
     final allNotes = await getAllNotes();
     _notes = allNotes.toList();
-    _notesStramController.add(_notes);
+    _notesStreamController.add(_notes);
   }
 
   Future<DatabaseNote> updateNote({
@@ -55,10 +74,15 @@ class NotesService {
     await getNote(id: note.id);
 
     // update db
-    final updatesCount = await db.update(noteTable, {
-      textColumn: text,
-      isSyncedWithCloudColumn: 0,
-    });
+    final updatesCount = await db.update(
+      noteTable,
+      {
+        textColumn: text,
+        isSyncedWithCloudColumn: 0,
+      },
+      where: "id = ?",
+      whereArgs: [note.id],
+    );
 
     if (updatesCount == 0) {
       throw CouldNotUpdateNoteException();
@@ -66,7 +90,7 @@ class NotesService {
       final updatedNote = await getNote(id: note.id);
       _notes.removeWhere((note) => note.id == updatedNote.id);
       _notes.add(updatedNote);
-      _notesStramController.add(_notes);
+      _notesStreamController.add(_notes);
       return updatedNote;
     }
   }
@@ -98,7 +122,7 @@ class NotesService {
       final note = DatabaseNote.fromRow(notes.first);
       _notes.removeWhere((note) => note.id == id);
       _notes.add(note);
-      _notesStramController.add(_notes);
+      _notesStreamController.add(_notes);
       return note;
     }
   }
@@ -108,7 +132,7 @@ class NotesService {
     final db = _getDatabaseOrThrow();
     final numberOfDeletions = await db.delete(noteTable);
     _notes = [];
-    _notesStramController.add(_notes);
+    _notesStreamController.add(_notes);
     return numberOfDeletions;
   }
 
@@ -126,7 +150,7 @@ class NotesService {
       final countBefore = _notes.length;
       _notes.removeWhere((note) => note.id == id);
       if (_notes.length != countBefore) {
-        _notesStramController.add(_notes);
+        _notesStreamController.add(_notes);
       }
     }
   }
@@ -157,7 +181,7 @@ class NotesService {
     );
 
     _notes.add(note);
-    _notesStramController.add(_notes);
+    _notesStreamController.add(_notes);
 
     return note;
   }

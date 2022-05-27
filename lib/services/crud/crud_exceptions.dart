@@ -15,3 +15,5 @@ class CouldNotFindNoteException implements Exception {}
 class CouldNotDeleteNoteException implements Exception {}
 
 class CouldNotUpdateNoteException implements Exception {}
+
+class UserShouldBeSetBeforeReadingAllNotes implements Exception {}
