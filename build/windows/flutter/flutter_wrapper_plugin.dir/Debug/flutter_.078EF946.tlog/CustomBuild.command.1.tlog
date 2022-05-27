@@ -1,0 +1,10 @@
+^C:\USERS\49157\DOCUMENTS\CODING\SUCCESS_PLANNER\WINDOWS\FLUTTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/49157/Documents/Coding/success_planner/windows -BC:/Users/49157/Documents/Coding/success_planner/build/windows --check-stamp-file C:/Users/49157/Documents/Coding/success_planner/build/windows/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
