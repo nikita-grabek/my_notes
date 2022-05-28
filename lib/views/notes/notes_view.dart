@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:success_planner/constants/routes.dart';
 import 'package:success_planner/enums/menu_action.dart';
 import 'dart:developer' as devtools;
 
 import 'package:success_planner/services/auth/auth_service.dart';
+import 'package:success_planner/services/auth/bloc/auth_bloc.dart';
+import 'package:success_planner/services/auth/bloc/auth_event.dart';
 import 'package:success_planner/services/cloud/cloud_note.dart';
 import 'package:success_planner/services/cloud/firebase_cloud_storage.dart';
 import 'package:success_planner/utilities/dialogs/logout_dialog.dart';
@@ -45,11 +48,10 @@ class _NotesViewState extends State<NotesView> {
                   final shouldlogout = await showLogOutDialog(context);
                   devtools.log(shouldlogout.toString());
                   if (shouldlogout) {
-                    await AuthService.firebase().logOut();
-
                     if (!mounted) return;
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginRoute, (_) => false);
+                    context.read<AuthBloc>().add(
+                          const AuthEventLogOut(),
+                        );
                   }
                   break;
               }

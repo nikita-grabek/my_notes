@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:success_planner/constants/routes.dart';
 import 'package:success_planner/services/auth/auth_exceptions.dart';
-import 'package:success_planner/services/auth/auth_service.dart';
+import 'package:success_planner/services/auth/bloc/auth_bloc.dart';
+import 'package:success_planner/services/auth/bloc/auth_event.dart';
 import 'package:success_planner/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -57,32 +59,12 @@ class _LoginViewState extends State<LoginView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                await AuthService.firebase().logIn(
-                  email: email,
-                  password: password,
-                );
-                final user = AuthService.firebase().currentUser;
-                if (user?.isEmailVerified ?? false) {
-                  // users email is verified
-                  if (!mounted) return;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    notesRoute,
-                    (route) => false,
-                  );
-                } else {
-                  // users email is NOT verfied
-                  if (!mounted) return;
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    verifyEmailRoute,
-                    (route) => false,
-                  );
-                }
-
-                if (!mounted) return;
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notesRoute,
-                  (route) => false,
-                );
+                context.read<AuthBloc>().add(
+                      AuthEventLogIn(
+                        email,
+                        password,
+                      ),
+                    );
               } on UserNotFoundAuthException {
                 await showErrorDialog(
                   context,
