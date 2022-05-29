@@ -5,7 +5,6 @@ import 'package:success_planner/services/auth/auth_service.dart';
 import 'package:success_planner/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:success_planner/utilities/generics/get_arguments.dart';
 import 'package:success_planner/services/cloud/cloud_note.dart';
-import 'package:success_planner/services/cloud/cloud_storage_exceptions.dart';
 import 'package:success_planner/services/cloud/firebase_cloud_storage.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
